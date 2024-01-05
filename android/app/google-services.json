@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1064007111573",
+    "project_id": "fyp-i-talea-e85df",
+    "storage_bucket": "fyp-i-talea-e85df.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1064007111573:android:bcf280a7b41a5d6f239c9c",
+        "android_client_info": {
+          "package_name": "com.example.final_year_project_italea"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCus4KK7TlFzH7j3kErbRW5W7ZgRNGNkv4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
