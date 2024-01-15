@@ -89,20 +89,29 @@ class QuizQuesCreator {
   static Future<Map> getQuizQue(String quizID, int quePoint) async {
     late Map queData;
 
-    await FirebaseFirestore.instance
+    QuerySnapshot<Map<String, dynamic>> value = await FirebaseFirestore.instance
         .collection("quiz")
         .doc(quizID)
         .collection("questions")
-        .where("point", isEqualTo: quePoint)
-        .get().then((value){
-          for
-      queData = value.docs.elementAt(0).data();
-    });
+        //.where("point", isEqualTo: quePoint)
+        .get();
+
+    if (value.docs.isNotEmpty) {
+      // Generate a random index between 0 and the length of the documents
+      int randomIndex = Random().nextInt(value.docs.length);
+
+      // Get the data from the randomly selected document
+      queData = value.docs.elementAt(randomIndex).data();
+    } else {
+      // Handle the case where no documents match the criteria
+      queData = {};
+    }
 
     print(queData);
     return queData;
   }
 }
+
 
 class QuestionModel{
   late String question = "";
@@ -112,4 +121,5 @@ class QuestionModel{
   late String option4 = "";
   late String correctAnswer = "";
   late String questionInfo = "";
+  late String infoAnswer = "";
 }

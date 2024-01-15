@@ -1,6 +1,6 @@
-/*
 import 'dart:async';
 
+import 'package:final_year_project_italea/Basic_Page/Quiz_page.dart';
 import 'package:final_year_project_italea/Service/FireStore_service.dart';
 import 'package:final_year_project_italea/Widget/Quiz_Widget/Lifeline_sidebar.dart';
 import 'package:flutter/material.dart';
@@ -9,27 +9,35 @@ import 'package:just_audio/just_audio.dart';
 import '../../Constant/color.dart';
 import '../../Service/Quiz_service.dart';
 import 'Loser.dart';
+import 'Question.dart';
+import 'ResultPage.dart';
 import 'Winner.dart';
 
-class Question extends StatefulWidget {
+class Question1 extends StatefulWidget {
 
   final String QuizId;
   final int QuePoint;
+  int? questionCount;
+  int? result;
 
-  const Question({
+  Question1({
     Key? key,
     required this.QuizId,
     required this.QuePoint,
+    this.questionCount,
+    this.result,
   }) : super(key: key);
 
   @override
-  State<Question> createState() => _QuestionState();
+  State<Question1> createState() => _Question1State();
 }
 
-class _QuestionState extends State<Question> {
+class _Question1State extends State<Question1> {
 
   QuestionModel questionModel = new QuestionModel();
   AudioPlayer player = AudioPlayer();
+  int questionCount = 1;
+  int result = 0;
   //final player = AudioCache();
 
   getQuestion() async {
@@ -38,6 +46,7 @@ class _QuestionState extends State<Question> {
         questionModel.question = queData["question"];
         questionModel.correctAnswer = queData["correctAnswer"];
         questionModel.questionInfo = queData["questionInfo"];
+        questionModel.infoAnswer = queData["infoAnswer"];
 
         List options = [
           queData["opt1"],
@@ -60,8 +69,8 @@ class _QuestionState extends State<Question> {
   bool opt3Locked = false;
   bool opt4Locked = false;
 
-  int maxSeconds =  130;
-  int seconds = 130;
+  int maxSeconds =  60;
+  int seconds = 60;
   Timer? timer;
 
   QueTimer(){
@@ -72,9 +81,8 @@ class _QuestionState extends State<Question> {
         timer?.cancel();
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) =>
-                Loser(point: widget.QuePoint == 4 ? 0 : widget.QuePoint~/2,
-                    correctAnswer: questionModel.correctAnswer,
-                    QuizID: widget.QuizId)));
+                ResultPage(QuizID: widget.QuizId,
+                  QuePoint: widget.QuePoint, questionCount: questionCount, result: result,)));
       }
     });
   }
@@ -111,6 +119,8 @@ class _QuestionState extends State<Question> {
     getQuestion();
     playLocal();
     QueTimer();
+    questionCount = widget.questionCount ?? 0;
+    result = widget.result ?? 0;
   }
 
   @override
@@ -129,7 +139,8 @@ class _QuestionState extends State<Question> {
             ElevatedButton(
                 onPressed: () async{
                   await FireStoreDB.updatePoint( widget.QuePoint == 4 ? 0 : widget.QuePoint~/2);
-                  Navigator.pop(context, true);
+                  Navigator.pop(context);
+                  Navigator.pop(context);
                 },
                 child: Text("Okay!")
             ),
@@ -142,7 +153,7 @@ class _QuestionState extends State<Question> {
         final exitQuiz = await showWarning(
             context: context,
             title: "DO YOU WANT TO EXIT QUIZ ?" ,
-            content : "You will get ${widget.QuePoint == 4 ? 0 : widget.QuePoint~/2} Point.");
+            content : "You Will Get Rs.${ widget.QuePoint == 4 ? 0 : widget.QuePoint~/2} In Your Account.");
         return exitQuiz ?? true;
       },
       child: Scaffold(
@@ -154,6 +165,19 @@ class _QuestionState extends State<Question> {
             ),
           ),
           actions: [
+            IconButton(
+              icon: Icon(
+                Icons.info,
+                color: Colors.black,
+              ),
+              onPressed: () {
+                // Handle the action when the icon is pressed
+                showInfoPopup(
+                  context,
+                  questionModel.infoAnswer,
+                );
+              },
+            ),
           ],
         ),
         //drawer: LifelineDrawer(point: widget.QuePoint),
@@ -189,6 +213,16 @@ class _QuestionState extends State<Question> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            SizedBox(
+              width: MediaQuery.of(context).size.width - 60,
+              child: LinearProgressIndicator(
+                minHeight: 10,
+                value: questionCount / 5, // Assuming you have 5 questions in total
+                valueColor: AlwaysStoppedAnimation<Color>(hexStringToColor("03045E")),
+                backgroundColor: Colors.grey,
+              ),
+            ),
+            SizedBox(height: 30),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -204,7 +238,10 @@ class _QuestionState extends State<Question> {
                     ],
                   ),
                 ),
-                Text("any")
+                Text("Question number: ${questionCount} / 5", style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20
+                ),)
               ],
             ),
             SizedBox(height: 20),
@@ -238,7 +275,7 @@ class _QuestionState extends State<Question> {
                       questionModel.question,
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 23,
                         fontWeight: FontWeight.bold,
                         color: hexStringToColor("03045E"),
                       ),
@@ -248,7 +285,7 @@ class _QuestionState extends State<Question> {
                       questionModel.questionInfo,
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontSize: 15,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: hexStringToColor("03045E"),
                       ),
@@ -270,22 +307,60 @@ class _QuestionState extends State<Question> {
                   opt1Locked = true;
                 });
 
-                Future.delayed(Duration(seconds: 3) , () async{
+                Future.delayed(Duration(seconds: 3), () async {
                   if (questionModel.correctAnswer == questionModel.option1) {
                     print("This is right");
-                    Navigator.pushReplacement(context, MaterialPageRoute(
-                        builder: (context) =>
-                            Winner(QuizID: widget.QuizId,
-                                QuePoint: widget.QuePoint)));
+                    questionCount++;
+                    result++;
+                    if (questionCount >= 5) {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ResultPage(QuizID: widget.QuizId,
+                                  QuePoint: widget.QuePoint, questionCount: questionCount, result: result,)
+                        ),
+                      );
+                    } else {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Question1(
+                            QuizId: widget.QuizId,
+                            QuePoint: (widget.QuePoint) * 2,
+                            questionCount: questionCount,
+                            result: result,
+                          ),
+                        ),
+                      );
+                    }
                   } else {
                     print("This is wrong");
-                    await FireStoreDB.updatePoint((widget.QuePoint~/2));
+                    await FireStoreDB.updatePoint((widget.QuePoint ~/ 2));
                     playLosserSound();
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) =>
-                            Loser(point: (widget.QuePoint~/2),
-                                correctAnswer: questionModel.correctAnswer,
-                                QuizID: widget.QuizId)));
+                    questionCount++;
+                    if (questionCount >= 5) {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ResultPage(QuizID: widget.QuizId,
+                                QuePoint: widget.QuePoint, questionCount: questionCount, result: result,)
+                        ),
+                      );
+                    } else {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Question1(
+                            QuizId: widget.QuizId,
+                            QuePoint: (widget.QuePoint > 1) ? (widget.QuePoint ~/ 2) : 1,
+                            questionCount: questionCount,
+                            result: result,
+                          ),
+                        ),
+                      );
+                    }
                   }
                 });
               },
@@ -294,15 +369,14 @@ class _QuestionState extends State<Question> {
                 padding: EdgeInsets.all(14),
                 margin: EdgeInsets.symmetric(horizontal: 17, vertical: 5),
                 decoration: BoxDecoration(
-                    color: opt1Locked ? Colors.greenAccent.withOpacity(0.8) : hexStringToColor("03045E"),
+                    color: opt1Locked
+                        ? Colors.greenAccent.withOpacity(0.8)
+                        : hexStringToColor("03045E"),
                     borderRadius: BorderRadius.circular(34)),
                 child: Text(
                   "A. ${questionModel.option1}",
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: 17,
-                      color: Colors.white
-                  ),
+                  style: TextStyle(fontSize: 17, color: Colors.white),
                 ),
               ),
             ),
@@ -317,22 +391,60 @@ class _QuestionState extends State<Question> {
                   opt2Locked = true;
                 });
 
-                Future.delayed(Duration(seconds: 3) , () async{
+                Future.delayed(Duration(seconds: 3), () async {
                   if (questionModel.correctAnswer == questionModel.option2) {
                     print("This is right");
-                    Navigator.pushReplacement(context, MaterialPageRoute(
-                        builder: (context) =>
-                            Winner(QuizID: widget.QuizId,
-                                QuePoint: widget.QuePoint)));
+                    questionCount++;
+                    result++;
+                    if (questionCount >= 5) {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ResultPage(QuizID: widget.QuizId,
+                                QuePoint: widget.QuePoint, questionCount: questionCount, result: result,)
+                        ),
+                      );
+                    } else {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Question1(
+                            QuizId: widget.QuizId,
+                            QuePoint: (widget.QuePoint) * 2,
+                            questionCount: questionCount,
+                            result: result,
+                          ),
+                        ),
+                      );
+                    }
                   } else {
                     print("This is wrong");
-                    await FireStoreDB.updatePoint(widget.QuePoint~/2);
+                    await FireStoreDB.updatePoint((widget.QuePoint ~/ 2));
                     playLosserSound();
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) =>
-                            Loser(point: widget.QuePoint,
-                                correctAnswer: questionModel.correctAnswer,
-                                QuizID: widget.QuizId)));
+                    questionCount++;
+                    if (questionCount >= 5) {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ResultPage(QuizID: widget.QuizId,
+                                QuePoint: widget.QuePoint, questionCount: questionCount, result: result,)
+                        ),
+                      );
+                    } else {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Question1(
+                            QuizId: widget.QuizId,
+                            QuePoint: (widget.QuePoint > 1) ? (widget.QuePoint ~/ 2) : 1,
+                            questionCount: questionCount,
+                            result: result,
+                          ),
+                        ),
+                      );
+                    }
                   }
                 });
               },
@@ -364,19 +476,60 @@ class _QuestionState extends State<Question> {
                   opt3Locked = true;
                 });
 
-                Future.delayed(Duration(seconds: 3) , () async{
+                Future.delayed(Duration(seconds: 3), () async {
                   if (questionModel.correctAnswer == questionModel.option3) {
                     print("This is right");
-                    Navigator.pushReplacement(context, MaterialPageRoute(
-                        builder: (context) =>
-                            Winner(QuizID: widget.QuizId,
-                                QuePoint: widget.QuePoint)));
+                    questionCount++;
+                    result++;
+                    if (questionCount >= 5) {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ResultPage(QuizID: widget.QuizId,
+                                QuePoint: widget.QuePoint, questionCount: questionCount, result: result,)
+                        ),
+                      );
+                    } else {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Question1(
+                            QuizId: widget.QuizId,
+                            QuePoint: (widget.QuePoint) * 2,
+                            questionCount: questionCount,
+                            result: result,
+                          ),
+                        ),
+                      );
+                    }
                   } else {
                     print("This is wrong");
-                    await FireStoreDB.updatePoint(widget.QuePoint~/2);
+                    await FireStoreDB.updatePoint((widget.QuePoint ~/ 2));
                     playLosserSound();
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) => Loser(point: widget.QuePoint, correctAnswer: questionModel.correctAnswer, QuizID: widget.QuizId)));
+                    questionCount++;
+                    if (questionCount >= 5) {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ResultPage(QuizID: widget.QuizId,
+                                QuePoint: widget.QuePoint, questionCount: questionCount, result: result,)
+                        ),
+                      );
+                    } else {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Question1(
+                            QuizId: widget.QuizId,
+                            QuePoint: (widget.QuePoint > 1) ? (widget.QuePoint ~/ 2) : 1,
+                            questionCount: questionCount,
+                            result: result,
+                          ),
+                        ),
+                      );
+                    }
                   }
                 });
               },
@@ -408,19 +561,60 @@ class _QuestionState extends State<Question> {
                   opt4Locked = true;
                 });
 
-                Future.delayed(Duration(seconds: 3) , () async{
+                Future.delayed(Duration(seconds: 3), () async {
                   if (questionModel.correctAnswer == questionModel.option4) {
                     print("This is right");
-                    Navigator.pushReplacement(context, MaterialPageRoute(
-                        builder: (context) =>
-                            Winner(QuizID: widget.QuizId,
-                                QuePoint: widget.QuePoint)));
+                    questionCount++;
+                    result++;
+                    if (questionCount >= 5) {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ResultPage(QuizID: widget.QuizId,
+                                QuePoint: widget.QuePoint, questionCount: questionCount, result: result,)
+                        ),
+                      );
+                    } else {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Question1(
+                            QuizId: widget.QuizId,
+                            QuePoint: (widget.QuePoint) * 2,
+                            questionCount: questionCount,
+                            result: result,
+                          ),
+                        ),
+                      );
+                    }
                   } else {
                     print("This is wrong");
-                    await FireStoreDB.updatePoint(widget.QuePoint~/2);
+                    await FireStoreDB.updatePoint((widget.QuePoint ~/ 2));
                     playLosserSound();
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) => Loser(point: widget.QuePoint, correctAnswer: questionModel.correctAnswer, QuizID: widget.QuizId)));
+                    questionCount++;
+                    if (questionCount >= 5) {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ResultPage(QuizID: widget.QuizId,
+                                QuePoint: widget.QuePoint, questionCount: questionCount, result: result,)
+                        ),
+                      );
+                    } else {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Question1(
+                            QuizId: widget.QuizId,
+                            QuePoint: (widget.QuePoint > 1) ? (widget.QuePoint ~/ 2) : 1,
+                            questionCount: questionCount,
+                            result: result,
+                          ),
+                        ),
+                      );
+                    }
                   }
                 });
               },
@@ -447,4 +641,28 @@ class _QuestionState extends State<Question> {
     );
   }
 }
-*/
+void showInfoPopup(BuildContext context, String infoText) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        content: SingleChildScrollView(
+          child: Container(
+            child: Text(
+              infoText,
+              style: TextStyle(fontSize: 16.0),
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text('OK'),
+          ),
+        ],
+      );
+    },
+  );
+}

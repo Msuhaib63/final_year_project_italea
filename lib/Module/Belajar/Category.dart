@@ -17,37 +17,37 @@ class Category {
 List<Category> categoryList = [
   Category(
     name: 'Pengenalan Ilmu Tajweed',
-    noOfCourses: 5,
+    noOfCourses: 4,
     thumbnail: "assets/courseIcon/1.png",
     categoryNum: 1,
   ),
   Category(
     name: 'Huruf Hijaiyah',
-    noOfCourses: 4,
+    noOfCourses: 3,
     thumbnail: "assets/courseIcon/2.png",
     categoryNum: 2,
   ),
   Category(
     name: 'Makhraj Huruf Al-Quran',
-    noOfCourses: 6,
+    noOfCourses: 3,
     thumbnail: "assets/courseIcon/3.png",
     categoryNum: 3,
   ),
   Category(
     name: 'Sifat Huruf Al-Quran',
-    noOfCourses: 6,
+    noOfCourses: 5,
     thumbnail: "assets/courseIcon/4.png",
     categoryNum: 4,
   ),
   Category(
     name: 'Hukum Nun Sukun\n dan Tanwin',
-    noOfCourses: 7,
+    noOfCourses: 2,
     thumbnail: "assets/courseIcon/5.png",
     categoryNum: 5,
   ),
   Category(
     name: 'Hukum Mim Sukun',
-    noOfCourses: 5,
+    noOfCourses: 2,
     thumbnail: "assets/courseIcon/6.png",
     categoryNum: 6,
   ),

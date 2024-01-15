@@ -235,7 +235,7 @@ class _SubTopicState extends State<SubTopic> {
               children: [
                 // Duration
                 Container(
-                  width: 90,
+                  width: 150,
                   height: 30,
                   decoration: colorBackground4(context),
                   child: Row(
@@ -260,7 +260,7 @@ class _SubTopicState extends State<SubTopic> {
                 SizedBox(width: 20),
                 // Additional info
                 Container(
-                  width: 250,
+                  width: 150,
                   height: 30,
                   decoration: colorBackground4(context),
                   child: Row(

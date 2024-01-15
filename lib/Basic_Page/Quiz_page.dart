@@ -7,10 +7,12 @@ import 'package:flutter/services.dart';
 
 import '../Constant/color.dart';
 import '../Constant/profilepicture.dart';
+import '../Content/Chat/Chat_Screen.dart';
 import '../Content/Quiz/Quiz_intro.dart';
 //import '../Database/localDB.dart';
 import '../Service/Quiz_service.dart';
-import '../Widget/NavBar.dart';
+import '../Widget/QuizNavBar.dart';
+import '../Widget/QuranNavBar.dart';
 
 class QuizPage extends StatefulWidget {
   const QuizPage({Key? key}) : super(key: key);
@@ -59,6 +61,8 @@ class _QuizPageState extends State<QuizPage> {
 
   @override
   Widget build(BuildContext context) {
+    String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.light,
       child: isLoading ? Scaffold(
@@ -79,7 +83,7 @@ class _QuizPageState extends State<QuizPage> {
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>QuizPage()));
         },
         child: Scaffold(
-          appBar: NavBar(context, 'Quiz Section', Icons.info),
+          appBar: QuizNavBar(context, 'Quiz Section', Icons.info),
           body: StreamBuilder<DocumentSnapshot>(
             stream: FirebaseFirestore.instance.collection('Users').doc(currentUser.uid).snapshots(),
             builder: (context, snapshot) {
@@ -144,20 +148,79 @@ class _QuizPageState extends State<QuizPage> {
                                 viewportFraction: 0.8
                             )),
                         Container(
-                          padding: EdgeInsets.symmetric(vertical: 20),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              CircleAvatar(backgroundColor: Colors.purple, radius: 35),
-                              CircleAvatar(
-                                  backgroundColor: Colors.redAccent, radius: 35),
-                              CircleAvatar(backgroundColor: Colors.green, radius: 35),
-                              CircleAvatar(
-                                  backgroundColor: Colors.yellowAccent, radius: 35),
-                            ],
+                          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                          height: 160, // Adjust the height according to your requirement
+                          child: StreamBuilder<QuerySnapshot>(
+                            stream: FirebaseFirestore.instance.collection("Users").orderBy("point", descending: true).snapshots(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData && snapshot.data != null) {
+                                var users = snapshot.data!.docs;
+
+                                // Shuffle the list of users
+                                users.shuffle();
+
+                                return ListView(
+                                  scrollDirection: Axis.horizontal,
+                                  children: List.generate(users.length, (index) {
+                                    var user = users[index].data() as Map<String, dynamic>;
+
+                                    // Check if the user's position matches their actual position in the list
+                                    if (user["position"] == "user") {
+                                      return Padding(
+                                        padding: EdgeInsets.symmetric(horizontal: 15),
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            // Navigate to the chat page
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => ChatPage(
+                                                  receiverUserEmail: user['email'],
+                                                  receiverUserID: user['userID'],
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          child: Column(
+                                            children: [
+                                              CircleAvatar(
+                                                backgroundImage: NetworkImage(user["photoUrl"]),
+                                                radius: 35,
+                                              ),
+                                              SizedBox(height: 4),
+                                              Text(
+                                                capitalize(user["username"]),
+                                                style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                                              ),
+                                              Text(
+                                                "Points: ${user["point"]}",
+                                                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    } else {
+                                      // Return an empty container if the position doesn't match
+                                      return Container();
+                                    }
+                                  }),
+                                );
+                              } else if (snapshot.hasError) {
+                                return Center(
+                                  child: Text('Error${snapshot.error}'),
+                                );
+                              }
+                              return Center(child: CircularProgressIndicator());
+                            },
                           ),
                         ),
-                        Divider(thickness: 1,color: hexStringToColor("03045E"),indent: 10,endIndent: 10,),
+
+
+
+
+
+                        const Divider(),
                         Container(
                             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                             child: Column(
@@ -167,7 +230,7 @@ class _QuizPageState extends State<QuizPage> {
                                     child: Text(
                                       "Top Scorer",
                                       style: TextStyle(
-                                          fontSize: 18,
+                                          fontSize: 20,
                                         fontWeight: FontWeight.bold,
                                         color: hexStringToColor("03045E")
                                       ),
@@ -187,25 +250,36 @@ class _QuizPageState extends State<QuizPage> {
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            TopPlayer["username"].toString().length >=16 ? "${TopPlayer["username"].toString().substring(0,15)}...": TopPlayer["username"],
+                                            TopPlayer != null
+                                                ? capitalize(
+                                              TopPlayer["username"].toString().length >= 16
+                                                  ? "${(TopPlayer["username"]).substring(0, 15)}..."
+                                                  : TopPlayer["username"],
+                                            )
+                                                : "Loading...",
                                             style: TextStyle(
-                                                fontSize: 28,
-                                                fontWeight: FontWeight.bold,
-                                              color: hexStringToColor("03045E")
+                                              fontSize: 28,
+                                              fontWeight: FontWeight.bold,
+                                              color: hexStringToColor("03045E"),
                                             ),
                                           ),
-                                          Text("${TopPlayer["point"]} point",
-                                              style: TextStyle(
-                                                  fontSize: 24,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: hexStringToColor("03045E")
-                                              ))
+                                          Text(
+                                            TopPlayer != null
+                                                ? "${TopPlayer["point"]} point"
+                                                : "Loading...",
+                                            style: TextStyle(
+                                              fontSize: 24,
+                                              fontWeight: FontWeight.bold,
+                                              color: hexStringToColor("03045E"),
+                                            ),
+                                          ),
+
                                         ],
                                       )
                                     ],
                                   )
                                 ])),
-                        Divider(thickness: 1,color: hexStringToColor("03045E"),indent: 10,endIndent: 10,),
+                        const Divider(),
 
                         Container(
                           padding: EdgeInsets.all(15),
@@ -215,7 +289,7 @@ class _QuizPageState extends State<QuizPage> {
                               Text(
                                 "Unlock New Quizzes",
                                 style: TextStyle(
-                                    fontSize: 19, fontWeight: FontWeight.w600,
+                                    fontSize: 20, fontWeight: FontWeight.w600,
                                   color: hexStringToColor("03045E"),
                                 ),
                                 textAlign: TextAlign.left,
@@ -230,6 +304,7 @@ class _QuizPageState extends State<QuizPage> {
                                   if (index >= 0 && index < quiz.length) {
                                     // Access quiz data for the current index
                                     var currentQuiz = quiz[index];
+                                    bool isAlFatihah = currentQuiz["Quizid"] == "Al-Fatihah";
                                     return GestureDetector(
                                       onTap: () => Navigator.push(
                                           context,
@@ -279,8 +354,14 @@ class _QuizPageState extends State<QuizPage> {
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
                                                   Text(currentQuiz["quiz_name"], style: TextStyle(color: hexStringToColor("03045E"), fontWeight: FontWeight.bold, fontSize: 17),),
-                                                  Text("Number of Point: ${currentQuiz["unlock_point"]}",
-                                                    style: TextStyle(color: hexStringToColor("A19CC5"), fontSize: 13)
+                                                  Text(
+                                                    isAlFatihah
+                                                        ? "Number of Point: Free"
+                                                        : "Number of Point: ${currentQuiz["unlock_point"]}",
+                                                    style: TextStyle(
+                                                      color: hexStringToColor("A19CC5"),
+                                                      fontSize: 13,
+                                                    ),
                                                   ),
                                                   const SizedBox(
                                                     height: 5,

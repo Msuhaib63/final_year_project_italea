@@ -1,3 +1,4 @@
+import 'package:final_year_project_italea/Content/Profile/Information.dart';
 import 'package:final_year_project_italea/Content/Profile/Leaderboard.dart';
 import 'package:final_year_project_italea/Service/FireStore_service.dart';
 import 'package:flutter/services.dart';
@@ -36,6 +37,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   late String username = "";
   late String rank = "";
+  late Map<String, dynamic> userData;
+
 
   // Function to select image from the gallery
   void selectImage() async {
@@ -52,27 +55,41 @@ class _ProfilePageState extends State<ProfilePage> {
   final ApiService _apiService = ApiService();
   AyahADay? data;
 
-  // Function to get current user's data from Firestore
   void getCurrentUserData() async {
     DocumentSnapshot<Map<String, dynamic>> snapshot =
     await FirebaseFirestore.instance.collection("Users").doc(currentUser.uid).get();
 
     setState(() {
-      // Assign fetched username and rank to the widget's properties
-      username = snapshot.data()?['username'] ?? "";
-      rank = snapshot.data()?['rank'] ?? "";
-      //String newPhotoUrl = snapshot.data()?['photoUrl'] ?? "";
+      // Assign fetched user data to the 'userData' variable
+      userData = snapshot.data() ?? {};
+      // Dapatkan dan tetapkan username dan rank dari userData
+      username = userData['username'] ?? "";
+      rank = userData['rank'] ?? "";
     });
   }
 
   void getRank() async {
-    await FirebaseFirestore.instance.collection("Users").orderBy("point").get().then((value) {
+    await FirebaseFirestore.instance.collection("Users").orderBy("point", descending: true).get().then((value) {
       setState(() {
         LeadersList = value.docs;
-        rank = (LeadersList.indexWhere((element) => element.data()["username"] == username) + 1).toString();
+        int userIndex = LeadersList.indexWhere((element) => element.data()["username"] == username && element.data()["position"] == "user");
+
+        if (userIndex != -1) {
+          rank = (userIndex + 1).toString();
+
+          userData['rank'] = rank;
+
+          // Check if the position is 'user' before updating rank
+          if (userData['position'] == "user") {
+            FirebaseFirestore.instance.collection("Users").doc(currentUser.uid).update({'rank': rank});
+          }
+        } else {
+          rank = "N/A";
+        }
       });
     });
   }
+
 
   @override
   void initState() {
@@ -85,6 +102,8 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     _apiService.getAyahADay().then((value) => data = value);
+    String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
+
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark,
@@ -203,7 +222,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
                                         // Displaying user's username
                                         Text(
-                                          "${userData['username']}",
+                                          capitalize(userData['username']),
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                               color: hexStringToColor("03045E"),
@@ -233,6 +252,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                               fontWeight: FontWeight.bold
                                           ),
                                         ),
+
+
                                         //const SizedBox(height: 7),
 
                                         //button edit profile
@@ -372,7 +393,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(builder: (context) {
-                                          return LeaderBoard();
+                                          return LeaderBoard(name: userData["username"], point: userData["point"], curRank: userData["rank"]);
                                         }),
                                       );
                                     },
@@ -399,7 +420,14 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ),
                                   const Divider(),
                                   const SizedBox(height: 10,),
-                                  ProfileMenu(title: 'Information', icon: Icons.info, onTap:  () {},),
+                                  ProfileMenu(title: 'Information', icon: Icons.info, onTap:  () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) {
+                                        return const Information();
+                                      }),
+                                    );
+                                  },),
                                   // Logout button
                                   Padding(
                                     padding: EdgeInsets.symmetric(horizontal: 20),

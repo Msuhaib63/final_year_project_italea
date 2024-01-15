@@ -58,7 +58,7 @@ class _PDFViewerPageState extends State<PDFViewerPage> {
       body: PDFView(
         filePath: widget.file.path,
         autoSpacing: false,
-        swipeHorizontal: true,
+        //swipeHorizontal: true,
         //pageSnap: false,
         //pageFling: false,
         onRender: (pages) => setState(() => this.pages = pages ?? 0),

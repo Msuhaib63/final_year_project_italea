@@ -73,6 +73,9 @@ class CourseContainer extends StatelessWidget {
                   Text("Number of Courses: ${course.noOfSubTopic.toString()}",
                     style: TextStyle(color: hexStringToColor("A19CC5"), fontSize: 13),
                   ),
+                  Text("Courses Duration: ${course.durCourse.toString()}",
+                    style: TextStyle(color: hexStringToColor("A19CC5"), fontSize: 13),
+                  ),
                   const SizedBox(
                     height: 5,
                   ),

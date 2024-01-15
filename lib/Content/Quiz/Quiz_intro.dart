@@ -1,4 +1,5 @@
 import 'package:final_year_project_italea/Content/Quiz/Question.dart';
+import 'package:final_year_project_italea/Content/Quiz/Question1.dart';
 import 'package:final_year_project_italea/Widget/SecNavBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -42,7 +43,7 @@ class _QuizIntroState extends State<QuizIntro> {
   setGoto() async{
     /*await player.setAsset('assets/audio/QUIZ_INTRO.mp3');
     await player.play();*/
-    Navigator.push(context, MaterialPageRoute(builder: (context) => Question(QuizId: widget.QuizId, QuePoint: widget.QuizPrice)));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Question1(QuizId: widget.QuizId, QuePoint: widget.QuizPrice,)));
   }
 
   bool quizIsUnlocked = false;
@@ -76,29 +77,45 @@ class _QuizIntroState extends State<QuizIntro> {
               ),
             ),
             onPressed: () async {
-              quizIsUnlocked ?
-              setGoto() :
-              QuizUnlock.buyQuiz(QuizID: widget.QuizId , QuizPrice: widget.QuizPrice).then((bought_quiz){
-                if(bought_quiz){
-                  print("Done Bought");
-                  setState(() {
-                    quizIsUnlocked = true;
-                  });
-                }else{
-                  return showDialog(context: context, builder: (context)=>AlertDialog(
-                    title: Text("You do not have enough point to unlock this QUIZ!"),
-                    actions: [
-                      TextButton(
-                          onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                          child: Text("OK")
-                      )
-                    ],
-                  ));
-                }
-              });
+              if (widget.QuizId == "Al-Fatihah") {
+                // If the quiz is "Al-Fatihah", allow the user to start the quiz without buying.
+                quizIsUnlocked = true;
+                setGoto();
+              } else {
+                // If it's not "Al-Fatihah", check if the user has enough points to unlock.
+                quizIsUnlocked
+                    ? setGoto()
+                    : QuizUnlock.buyQuiz(
+                  QuizID: widget.QuizId,
+                  QuizPrice: widget.QuizPrice,
+                ).then((bought_quiz) {
+                  if (bought_quiz) {
+                    print("Done Bought");
+                    setState(() {
+                      quizIsUnlocked = true;
+                    });
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text(
+                          "You do not have enough point to unlock this QUIZ!",
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text("OK"),
+                          )
+                        ],
+                      ),
+                    );
+                  }
+                });
+              }
             }
+
         ),
         body: SafeArea(
           bottom: false,

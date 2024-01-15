@@ -104,7 +104,7 @@ class _SignupPageState extends State<SignupPage> {
                           'username' : _userNameTextController.text.isEmpty ? '' : _userNameTextController.text,
                           'bio' : 'empty bio..',
                           'photoUrl' : picProfileDefault,
-                          'rank' : 'NA',
+                          'rank' : 'N/A',
                           'point' : 0,
                           'position' : 'user'
                         }).then((value) async {

@@ -94,18 +94,19 @@ class _SettingState extends State<Setting> {
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             // Example usage
-            String quizID = "Al-Fatihah";
+            String quizID = "Al-Baqarah";
             String quePoint = "your_que_point";
             QuizQuestion question = QuizQuestion(
-              questionInfo: "",
-              infoAnswer: "Kata إِيَّاكَ dibaca dengan tafkheem, iaitu memberikan tekanan dan kekuatan pada huruf-hurufnya.",
-              correctAnswer: "Tafkheem",
-              opt1: "Madd",
-              opt2: "Idgham",
-              opt3: " Tanwin Dammah",
-              opt4: "Tafkheem",
-              question: "Bagaimana cara membaca kata إِيَّاكَ dalam Surah Al-Fatihah?",
-              point: 4
+                questionInfo: "أُنزِلَ إِلَيْكَ",
+                infoAnswer: "Subtopik dari topik Hukum Nun Sukun dan Tanwin ",
+                correctAnswer: "Ikhfa' Haqiqi",
+                opt1: "Izhar Halqi",
+                opt2: "Ikhfa' Haqiqi",
+                opt3: " Iqlab ",
+                opt4: "Idgham Ma'al Ghunnah",
+                question: " Apakah hukum Tajweed apabila نْ bertemu dengan زِ?",
+                point: 4
+
             );
 
             addOrUpdateQuestion(quizID, quePoint, question);

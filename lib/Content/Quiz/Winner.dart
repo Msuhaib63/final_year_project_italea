@@ -2,19 +2,24 @@ import 'package:confetti/confetti.dart';
 import 'package:final_year_project_italea/Service/FireStore_service.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:share/share.dart';
 import 'dart:math';
 
+import '../../Basic_Page/Quiz_page.dart';
+import '../../Constant/color.dart';
 import 'Question.dart';
 
 class Winner extends StatefulWidget {
 
   final int QuePoint;
   final String QuizID;
+  late int questionCount;
 
-  const Winner({
+  Winner({
     Key? key,
     required this.QuizID,
-    required this.QuePoint
+    required this.QuePoint,
+    required this.questionCount
   }) : super(key: key);
 
   @override
@@ -59,7 +64,12 @@ class _WinnerState extends State<Winner> {
           ElevatedButton(
               onPressed: () async{
                 await FireStoreDB.updatePoint( widget.QuePoint);
-                Navigator.pop(context , true)    ;
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) {
+                    return QuizPage();
+                  }),
+                );
               } ,
               child: Text("Okay!")
           ),
@@ -77,7 +87,12 @@ class _WinnerState extends State<Winner> {
       },
       child: Scaffold(
         floatingActionButton: ElevatedButton(
-          onPressed: () {},
+          onPressed: () {
+            // Replace the following with your own content to share
+            String shareContent = "I just won ${widget.QuePoint} points in the quiz! Check it out!";
+
+            Share.share(shareContent, subject: "Quiz Winner");
+          },
           child: Text("Share with Friends"),
         ),
         body: Stack(
@@ -91,9 +106,37 @@ class _WinnerState extends State<Winner> {
                   Text('YOUR ANSWER IS CORRECT', style: TextStyle( fontSize: 17, fontWeight: FontWeight.bold),),
                   Text('YOU WON', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),),
                   Text('${widget.QuePoint} Point', style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold),),
-                  ElevatedButton(child: Text("Next Question"), onPressed: (){
+                  /*ElevatedButton(child: Text("Next Question"), onPressed: (){
                     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Question(QuizId: widget.QuizID, QuePoint: (widget.QuePoint)*2 )));
-                  },)
+                  },)*/
+                  ElevatedButton(
+                      child: Text(
+                        'Get Reward',
+                        style: TextStyle(
+                          fontSize: 25,
+                          color: hexStringToColor("03045E"),
+                        ),),
+                      onPressed: (){
+                        showDialog(context: context, builder: (context)=>AlertDialog(
+                          title: Text("GOOD JOB, THIS YOUR REWARD!"),
+                          content: Text("You will get ${widget.QuePoint == 4 ? 0 : widget.QuePoint} Point."),
+                          actions: [
+                            ElevatedButton(
+                              onPressed: () async {
+                                await FireStoreDB.updatePoint(widget.QuePoint == 4 ? 0 : widget.QuePoint);
+                                Navigator.pop(context);
+                                Navigator.pop(context);                      },
+                              child: Text("Okay"),
+                            ),
+                            ElevatedButton(onPressed: (){
+                              Navigator.pop(context);
+                            },
+                              child: Text("Wait"),
+                            )
+                          ],
+                        ));
+                      }
+                  )
                 ],
               ),
             ),

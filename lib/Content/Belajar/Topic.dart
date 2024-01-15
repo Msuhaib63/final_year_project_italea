@@ -58,11 +58,11 @@ class _TopicState extends State<Topic> {
                               : (widget.cateforyNum == 3)
                               ? coursesList[index + 7]
                               : (widget.cateforyNum == 4)
-                              ? coursesList[index + 12]
+                              ? coursesList[index + 10]
                               : (widget.cateforyNum == 5)
-                              ? coursesList[index + 17]
+                              ? coursesList[index + 15]
                               : (widget.cateforyNum == 6)
-                              ? coursesList[index + 23]
+                              ? coursesList[index + 17]
                               : coursesList[index],
                         );
                       },

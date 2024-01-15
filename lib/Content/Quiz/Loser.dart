@@ -1,3 +1,4 @@
+import 'package:final_year_project_italea/Content/Quiz/Question1.dart';
 import 'package:flutter/material.dart';
 
 import '../../Constant/color.dart';
@@ -22,7 +23,7 @@ class Loser extends StatelessWidget {
     return Scaffold(
       floatingActionButton: ElevatedButton(
         onPressed: () {
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Question(QuizId: QuizID, QuePoint: (point~/2) )));
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Question1(QuizId: QuizID, QuePoint: (point~/2) )));
         },
         child: Text("Retry"),
       ),
@@ -56,6 +57,8 @@ class Loser extends StatelessWidget {
                         actions: [
                           ElevatedButton(onPressed: ()async{
                             await FireStoreDB.updatePoint(point == 4 ? 0 : point~/2);
+                            Navigator.pop(context);
+                            Navigator.pop(context);
                           }, child: Text("Quit")),
                           ElevatedButton(onPressed: (){
                             Navigator.pop(context);

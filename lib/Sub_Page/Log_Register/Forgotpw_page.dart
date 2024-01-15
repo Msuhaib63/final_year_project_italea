@@ -54,89 +54,91 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
         decoration: colorBackground8(context),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-
-            // Header Section
-            Container(
-              padding: const EdgeInsets.only(
-                  top: 40,
-                  bottom: 20,
-                  left: 20,
-                  right: 20
-              ),
-              child: Stack(
-                children: [
-                  Center(
-                    child: Container(
-                      width:300,
-                      child: Text(
-                        'Forgot Password',
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          color: Colors.white,
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+          
+              // Header Section
+              Container(
+                padding: const EdgeInsets.only(
+                    top: 40,
+                    bottom: 20,
+                    left: 20,
+                    right: 20
+                ),
+                child: Stack(
+                  children: [
+                    Center(
+                      child: Container(
+                        width:300,
+                        child: Text(
+                          'Forgot Password',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Colors.white,
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  Positioned(
-                    left: 0,
-                    child: CustomIconButton(
-                      child: const Icon(Icons.arrow_back, color: Colors.white,),
-                      height: 35,
-                      width: 35,
-                      onTap: () => Navigator.pop(context),
+                    Positioned(
+                      left: 0,
+                      child: CustomIconButton(
+                        child: const Icon(Icons.arrow_back, color: Colors.white,),
+                        height: 35,
+                        width: 35,
+                        onTap: () => Navigator.pop(context),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-
-
-            SizedBox(height: ((MediaQuery.of(context).size.height) *0.1)),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 130),
-                child: Image.asset(
-                    picForgotPass
-                )
-            ),
-            SizedBox(height: 30),
-
-            // Description
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25.0),
-              child: Text(
-                'Enter Your Email and we will send you a password request link',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 18, color: Colors.white),
+          
+          
+              SizedBox(height: ((MediaQuery.of(context).size.height) *0.1)),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 130),
+                  child: Image.asset(
+                      picForgotPass
+                  )
               ),
-            ),
-            SizedBox(height: 30),
-
-            // Email Input Field
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15.0),
-              child: CircularTextField(text: "Enter Email ID", isPasswordType: false, controller: _emailTextController),
-
-            ),
-            SizedBox(height: 30),
-
-            // Reset Password Button
-            MaterialButton(
-              onPressed: () {
-                passwordReset(); // Call your async function here
-              },
-              child: Text('Reset Password', style: TextStyle(fontSize: 15),),
-              color: hexStringToColor("C4FFF9"),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0), // Adjust the value as needed
-                side: BorderSide(color: Colors.blue), // Specify the border color
+              SizedBox(height: 30),
+          
+              // Description
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                child: Text(
+                  'Enter Your Email and we will send you a password request link',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18, color: Colors.white),
+                ),
               ),
-            )
-          ],
+              SizedBox(height: 30),
+          
+              // Email Input Field
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                child: CircularTextField(text: "Enter Email ID", isPasswordType: false, controller: _emailTextController),
+          
+              ),
+              SizedBox(height: 30),
+          
+              // Reset Password Button
+              MaterialButton(
+                onPressed: () {
+                  passwordReset(); // Call your async function here
+                },
+                child: Text('Reset Password', style: TextStyle(fontSize: 15),),
+                color: hexStringToColor("C4FFF9"),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0), // Adjust the value as needed
+                  side: BorderSide(color: Colors.blue), // Specify the border color
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

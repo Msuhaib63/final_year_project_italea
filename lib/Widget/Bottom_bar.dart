@@ -3,7 +3,7 @@ import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:final_year_project_italea/Constant/icons.dart';
 import 'package:final_year_project_italea/Constant/saiz.dart';
 import 'package:final_year_project_italea/Basic_Page/Belajar_page.dart';
-import 'package:final_year_project_italea/Basic_Page/Dashboard_page.dart';
+import 'package:final_year_project_italea/Basic_Page/Chat_page.dart';
 import 'package:final_year_project_italea/Basic_Page/Quran_page.dart';
 import 'package:final_year_project_italea/Basic_Page/Quiz_page.dart';
 import 'package:final_year_project_italea/Basic_Page/Profile_page.dart';
@@ -42,7 +42,7 @@ class _WidgetBottomBarState extends State<WidgetBottomBar> {
         ),
         PersistentBottomNavBarItem(
           icon: Center(child: Image.asset(icBottomDashboard,height: kBottomNavigationBarItemSize,)),
-          title: ("Dashboard"),
+          title: ("Murrabbi"),
           activeColorPrimary: Colors.black,
           inactiveColorPrimary: Colors.grey,
         ),

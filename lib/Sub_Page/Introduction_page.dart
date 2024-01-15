@@ -29,9 +29,9 @@ class _IntroductionPageState extends State<IntroductionPage> {
                 child: IntroductionScreen(
                   pages: [
 
-                    // Page 1: Quran Section
+                    // Page 1: Learn Tajweed Section
                     PageViewModel(
-                      title: "Quran Section",
+                      title: "Bahagian Belajar Tajweed",
                       bodyWidget: const Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -39,7 +39,26 @@ class _IntroductionPageState extends State<IntroductionPage> {
                           Padding(
                             padding: EdgeInsets.all(8.0),
                             child: Text(
-                              "Reading the Quran with colour-coded guidance of Tajweed law",
+                                "🌟 Selamat datang di Bahagian Belajar Tajweed kami! Temui program pembelajaran Tajweed yang menyeluruh, dilengkapi dengan video pembelajaran berkualiti tinggi yang menarik. Anda juga dapat mengakses nota ringkas dan tambahan dalam format PDF untuk memperkuat pemahaman Tajweed dan memupuk sikap membaca yang efektif. Sertai kami dalam perjalanan pembelajaran yang dinamik! 📖🎉🌈",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: 16)
+                            ),
+                          )
+                        ],
+                      ),
+                      image: Center(child: Image.asset(picQuran)),
+                    ),
+                    // Page 2: Quran Section
+                    PageViewModel(
+                      title: "Bahagian Quran",
+                      bodyWidget: const Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                              "Selamat datang ke aplikasi al-Quran kami yang unik! Nikmati pembacaan al-Quran dengan kod warna tajweed, akses mudah mengikut juz, dengar bacaan Qari pilihan, dan simpan penanda buka anda. Pengalaman al-Quran yang lebih berwarna, teratur, dan penuh inspirasi",
                               textAlign: TextAlign.center,
                               style: TextStyle(fontSize: 16)
                             ),
@@ -49,9 +68,9 @@ class _IntroductionPageState extends State<IntroductionPage> {
                       image: Center(child: Image.asset(picQuran)),
                     ),
 
-                    // Page 2: Learn Tajweed Section
+                    // Page 3: Murabbi Section
                     PageViewModel(
-                      title: "Learn Tajweed Section",
+                      title: "Bahagian Murabbi",
                       bodyWidget: const Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -59,7 +78,7 @@ class _IntroductionPageState extends State<IntroductionPage> {
                           Padding(
                             padding: EdgeInsets.all(8.0),
                             child: Text(
-                              "Has a comprehensive Tajweed learning syllabus, interactive exercises and gamification elements",
+                              "Selamat datang di Bahagian Murabbi kami! Nikmati perbualan yang lebih interaktif dengan ciri \"Voice Record\" dan kongsi gambar dari kamera atau galeri telefon. Terus hubungi Murabbi atau Ustaz bertauliah dalam Tajweed al-Quran untuk pandangan dan bimbingan yang lebih dekat. Pengalaman berkomunikasi yang dinamik - sertai kami sekarang! 🎙️📸🤲🌟",
                               textAlign: TextAlign.center,
                               style: TextStyle(fontSize: 16)
                             ),
@@ -71,7 +90,7 @@ class _IntroductionPageState extends State<IntroductionPage> {
 
                     // Page 3: Quiz Section
                     PageViewModel(
-                      title: "Quiz Section",
+                      title: "Bahagian Quiz",
                       bodyWidget: const Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -79,7 +98,7 @@ class _IntroductionPageState extends State<IntroductionPage> {
                           Padding(
                             padding: EdgeInsets.all(8.0),
                             child: Text(
-                              "Has a fun quiz section that will assess your knowledge of the knowledge of Tajweed that has been learned",
+                              "Mari sertai Bahagian Kuiz Tajweed kami! Uji pengetahuan Tajweed anda dalam suasana yang seronok dan interaktif. Kuiz ini direka khas untuk menilai pemahaman anda terhadap hukum-hukum Tajweed yang telah dipelajari sebelum ini. Bergabunglah dalam kuiz ini untuk mengukur kemahiran membaca al-Quran anda dan terus memperkukuhkan pemahaman Tajweed anda. Mari kita uji pengetahuan kita dengan gembira! 🌟📚",
                               textAlign: TextAlign.center,
                               style: TextStyle(fontSize: 16)
                             ),

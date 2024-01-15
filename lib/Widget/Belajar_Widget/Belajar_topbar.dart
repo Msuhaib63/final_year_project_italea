@@ -18,6 +18,8 @@ class BelajarTopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
+
     return Container(
 
       padding: const EdgeInsets.only(top: 50, left: 20, right: 20),
@@ -29,17 +31,18 @@ class BelajarTopBar extends StatelessWidget {
         mainAxisSize: MainAxisSize.min, // Set to min so that the column only takes the necessary space
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Assalamualaikum,\nApa Khabar ${name.length >= 12 ? "${name.substring(0, 12)}..." : name}",
-                style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold,color: Colors.white),
+                "Assalamualaikum, Apa Khabar \n ${capitalize(name)}",
+                style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold, color: Colors.white),
               ),
+              /*
               IconButton(
                 icon: Icon(Icons.notifications, color: Colors.white,),
                 onPressed: () {},
-              ),
+              ),*/
             ],
           ),
           const SizedBox(height: 15),

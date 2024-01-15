@@ -1,4 +1,4 @@
-import 'package:final_year_project_italea/Widget/NavBar.dart';
+import 'package:final_year_project_italea/Widget/QuranNavBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -31,7 +31,7 @@ class _QuranPageState extends State<QuranPage> {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark,
       child: Scaffold(
-        appBar: NavBar(context, "Quran Page", Icons.info),
+        appBar: QuranNavBar(context, "Quran Page", Icons.info),
         body: DefaultTabController(
           initialIndex: 0,
           length: 4,
